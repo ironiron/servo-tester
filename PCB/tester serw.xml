@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="D">
+  <design>
+    <source>D:/Projekty/kicad/tester serw/tester serw.sch</source>
+    <date>13.08.2017 20:24:39</date>
+    <tool>Eeschema 4.0.4-stable</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>tester serw.sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="IC1">
+      <value>ATTINY13A-SS</value>
+      <footprint>SO8</footprint>
+      <libsource lib="atmel" part="ATTINY13A-SS"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>598F306D</tstamp>
+    </comp>
+    <comp ref="C1">
+      <value>100n</value>
+      <libsource lib="device" part="C"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>598F35AC</tstamp>
+    </comp>
+    <comp ref="R1">
+      <value>10k</value>
+      <libsource lib="device" part="R"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>598F3653</tstamp>
+    </comp>
+    <comp ref="RV1">
+      <value>10K</value>
+      <libsource lib="device" part="POT"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>598F3946</tstamp>
+    </comp>
+    <comp ref="P3">
+      <value>servo</value>
+      <libsource lib="conn" part="CONN_01X03"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>598F3E1E</tstamp>
+    </comp>
+    <comp ref="P4">
+      <value>power</value>
+      <libsource lib="conn" part="CONN_01X02"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>598F3FE9</tstamp>
+    </comp>
+    <comp ref="CON1">
+      <value>AVR-ISP-10</value>
+      <footprint>AVR-ISP-10</footprint>
+      <libsource lib="atmel" part="AVR-ISP-10"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>598F4267</tstamp>
+    </comp>
+    <comp ref="SW1">
+      <value>button</value>
+      <libsource lib="device" part="SW_PUSH_SMALL_H"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>598F4472</tstamp>
+    </comp>
+    <comp ref="P2">
+      <value>servo</value>
+      <libsource lib="conn" part="CONN_01X03"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>598F48F0</tstamp>
+    </comp>
+    <comp ref="P1">
+      <value>servo</value>
+      <libsource lib="conn" part="CONN_01X03"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>598F4929</tstamp>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="atmel" part="ATTINY13-SS">
+      <aliases>
+        <alias>ATTINY13A-SS</alias>
+      </aliases>
+      <description>SO8, 1k Flash, 64B SRAM, 64B EEPROM, Debug Wire</description>
+      <docs>http://www.atmel.com/Images/doc2535.pdf</docs>
+      <fields>
+        <field name="Reference">IC</field>
+        <field name="Value">ATTINY13-SS</field>
+        <field name="Footprint">SO8</field>
+      </fields>
+      <pins>
+        <pin num="1" name="PB5(~RESET~/ADC0/PCINT5/dW)" type="BiDi"/>
+        <pin num="2" name="PB3(CLKI/ADC3/PCINT3)" type="BiDi"/>
+        <pin num="3" name="PB4(ADC2/PCINT4)" type="BiDi"/>
+        <pin num="4" name="GND" type="power_in"/>
+        <pin num="5" name="PB0(MOSI/AIN0/OC0A/PCINT0)" type="BiDi"/>
+        <pin num="6" name="PB1(MISO/AIN1/OC0B/INT0/PCINT1)" type="BiDi"/>
+        <pin num="7" name="PB2(SCK/ADC1/T0/PCINT2)" type="BiDi"/>
+        <pin num="8" name="VCC" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="atmel" part="AVR-ISP-10">
+      <description>Standard IDC10 Male Connector, ISP Kanda (STK200/300)</description>
+      <fields>
+        <field name="Reference">CON</field>
+        <field name="Value">AVR-ISP-10</field>
+        <field name="Footprint">AVR-ISP-10</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+        <pin num="3" name="~" type="passive"/>
+        <pin num="4" name="~" type="passive"/>
+        <pin num="5" name="~" type="passive"/>
+        <pin num="6" name="~" type="passive"/>
+        <pin num="7" name="~" type="passive"/>
+        <pin num="8" name="~" type="passive"/>
+        <pin num="9" name="~" type="passive"/>
+        <pin num="10" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="device" part="C">
+      <description>Unpolarized capacitor</description>
+      <footprints>
+        <fp>C?</fp>
+        <fp>C_????_*</fp>
+        <fp>C_????</fp>
+        <fp>SMD*_c</fp>
+        <fp>Capacitor*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="conn" part="CONN_01X02">
+      <description>Connector, single row, 01x02</description>
+      <footprints>
+        <fp>Pin_Header_Straight_1X02</fp>
+        <fp>Pin_Header_Angled_1X02</fp>
+        <fp>Socket_Strip_Straight_1X02</fp>
+        <fp>Socket_Strip_Angled_1X02</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">P</field>
+        <field name="Value">CONN_01X02</field>
+      </fields>
+      <pins>
+        <pin num="1" name="P1" type="passive"/>
+        <pin num="2" name="P2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="conn" part="CONN_01X03">
+      <description>Connector, single row, 01x03</description>
+      <footprints>
+        <fp>Pin_Header_Straight_1X03</fp>
+        <fp>Pin_Header_Angled_1X03</fp>
+        <fp>Socket_Strip_Straight_1X03</fp>
+        <fp>Socket_Strip_Angled_1X03</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">P</field>
+        <field name="Value">CONN_01X03</field>
+      </fields>
+      <pins>
+        <pin num="1" name="P1" type="passive"/>
+        <pin num="2" name="P2" type="passive"/>
+        <pin num="3" name="P3" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="device" part="POT">
+      <description>Potentionmetre</description>
+      <fields>
+        <field name="Reference">RV</field>
+        <field name="Value">POT</field>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+        <pin num="3" name="3" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="device" part="R">
+      <description>Resistor</description>
+      <footprints>
+        <fp>R_*</fp>
+        <fp>Resistor_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">R</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="device" part="SW_PUSH_SMALL_H">
+      <description>Button</description>
+      <fields>
+        <field name="Reference">SW</field>
+        <field name="Value">SW_PUSH_SMALL_H</field>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="conn">
+      <uri>D:\Program Files\KiCad\share\kicad\library\conn.lib</uri>
+    </library>
+    <library logical="device">
+      <uri>D:\Program Files\KiCad\share\kicad\library\device.lib</uri>
+    </library>
+    <library logical="atmel">
+      <uri>D:\Program Files\KiCad\share\kicad\library\atmel.lib</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="Net-(IC1-Pad3)">
+      <node ref="RV1" pin="2"/>
+      <node ref="IC1" pin="3"/>
+    </net>
+    <net code="2" name="Net-(CON1-Pad5)">
+      <node ref="R1" pin="2"/>
+      <node ref="CON1" pin="5"/>
+      <node ref="IC1" pin="1"/>
+    </net>
+    <net code="3" name="Net-(IC1-Pad6)">
+      <node ref="SW1" pin="2"/>
+      <node ref="IC1" pin="6"/>
+    </net>
+    <net code="4" name="Net-(CON1-Pad7)">
+      <node ref="CON1" pin="7"/>
+      <node ref="IC1" pin="7"/>
+    </net>
+    <net code="5" name="+BATT">
+      <node ref="CON1" pin="2"/>
+      <node ref="IC1" pin="8"/>
+      <node ref="P2" pin="2"/>
+      <node ref="C1" pin="1"/>
+      <node ref="P4" pin="1"/>
+      <node ref="P3" pin="2"/>
+      <node ref="R1" pin="1"/>
+      <node ref="RV1" pin="3"/>
+      <node ref="P1" pin="2"/>
+    </net>
+    <net code="6" name="Net-(CON1-Pad3)">
+      <node ref="CON1" pin="3"/>
+    </net>
+    <net code="7" name="GND">
+      <node ref="SW1" pin="1"/>
+      <node ref="C1" pin="2"/>
+      <node ref="P2" pin="1"/>
+      <node ref="IC1" pin="4"/>
+      <node ref="CON1" pin="10"/>
+      <node ref="P1" pin="1"/>
+      <node ref="RV1" pin="1"/>
+      <node ref="CON1" pin="8"/>
+      <node ref="CON1" pin="6"/>
+      <node ref="P3" pin="1"/>
+      <node ref="P4" pin="2"/>
+      <node ref="CON1" pin="4"/>
+    </net>
+    <net code="8" name="Net-(IC1-Pad2)">
+      <node ref="IC1" pin="2"/>
+    </net>
+    <net code="9" name="Net-(CON1-Pad1)">
+      <node ref="P3" pin="3"/>
+      <node ref="CON1" pin="1"/>
+      <node ref="IC1" pin="5"/>
+      <node ref="P2" pin="3"/>
+      <node ref="P1" pin="3"/>
+    </net>
+    <net code="10" name="Net-(CON1-Pad9)">
+      <node ref="CON1" pin="9"/>
+    </net>
+  </nets>
+</export>
