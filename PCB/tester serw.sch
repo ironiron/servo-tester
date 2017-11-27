@@ -1,4 +1,5 @@
 EESchema Schematic File Version 2
+LIBS:tester serw-rescue
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -77,7 +78,7 @@ F 3 "" H 3950 3300 50  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L POT RV1
+L POT-RESCUE-tester_serw RV1
 U 1 1 598F3946
 P 3650 2970
 F 0 "RV1" H 3650 2890 50  0000 C CNN
@@ -307,11 +308,12 @@ Wire Wire Line
 Wire Wire Line
 	3950 3070 4110 3070
 Wire Wire Line
-	4705 2175 4010 2175
+	4010 2175 4705 2175
 Wire Wire Line
 	4010 2175 4010 2670
 Connection ~ 4010 2670
 Wire Wire Line
 	4700 1775 4110 1775
 Connection ~ 3950 3070
+Connection ~ 4700 2175
 $EndSCHEMATC
