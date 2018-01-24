@@ -3,14 +3,18 @@
  *
  * Created: 2015-01-10 17:53:29
  *  Author: Rafał Mazurkiewicz
+ Servo tester. In period of 20ms sends 0,5-2,5ms impulse to servo.
+ potentiometer PB4
+ button PB1 INT0 long press (>1s) servo is oscillating, short press- neutrum.
+ Return to normal mode by pressing button (if oscillating), or by moving potentiometer.
+ output PB0
+ 
  tester serw wysyła co ok. 20ms impuls o długości 0,5-2,5ms do serwa.
  Potencjometr na PB4
  Przycisk na PB1 INT0. długie (>1s) naciśnięcie serwo oscyluje, krótkie stoi w neutrum 
  powrót do pracy swobodnej potencjometrem, bądź przyciskiem jeśli był tryb oscylacji.
  wyjście PB0
  */ 
-
-
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -25,49 +29,94 @@
 volatile uint8_t adc=0;
 volatile uint8_t remember=0;
 volatile uint8_t ticks=0;
-volatile uint8_t lenght=0;
+volatile uint8_t position=0;
 enum current_mode {normal, neutral, oscillating} current_mode;
 enum direction {left, right} direction;
 
 ISR(TIM0_OVF_vect)
 {
-	TCNT0=177;// interrupt every 19,9 ms
+	TCNT0=162; /*interrupt every 20 ms (f_cpu= 1200000 Hz)*/
 	
 	switch (current_mode)
 	{
 		case normal:
+		if(adc==0)
+		{
+			adc=1;
+		}
+		ticks=adc;
 		set_output;
-		for(ticks=0;ticks<adc;ticks++)_delay_us(10);
-		_delay_us(500);
+		/*asm loop (10us)*/
+		asm(
+		"1: dec %0" "\n\t"
+		
+		"nop" "\n\t"
+		"nop" "\n\t"
+		"nop" "\n\t"
+		
+		"nop" "\n\t"
+		"nop" "\n\t"
+		"nop" "\n\t"
+		
+		"nop" "\n\t"
+		"nop" "\n\t"
+		"nop" "\n\t"
+		
+		"brne 1b"
+		: "=r" (ticks)
+		: "0" (ticks)
+		);
+		_delay_us(490);
 		clear_output;
 		break;
 		
 		case neutral:
 		set_output;
-		_delay_us(500);//because maximum is 768 us
 		_delay_us(500);
-		_delay_us(500);//delay =1.5ms
+		_delay_us(500);
+		_delay_us(500);/*delay =1.5ms (max delay of this func. can be only 768 us)*/
 		clear_output;
 		break;
 		
 		case oscillating:
+		ticks=position;
 		set_output;
-		for(ticks=0;ticks<lenght;ticks++)_delay_us(10);
-		_delay_us(500);
+		/*asm loop (10us)*/
+		asm(
+		"1: dec %0" "\n\t"
+
+		"nop" "\n\t"
+		"nop" "\n\t"
+		"nop" "\n\t"
+		
+		"nop" "\n\t"
+		"nop" "\n\t"
+		"nop" "\n\t"
+		
+		"nop" "\n\t"
+		"nop" "\n\t"
+		"nop" "\n\t"
+		
+		"brne 1b"
+		: "=r" (ticks)
+		: "0" (ticks)
+		);
+		_delay_us(490);
 		clear_output;
 		adc=adc/20;
 		if(direction==left)
 		{
-			if(lenght-adc<0)lenght=0;
-			else lenght=lenght-adc;
+			if(position-adc<0)position=0;
+			else position=position-adc;
 		}
 		else 
 		{
-			if(lenght+adc>200)lenght=200;
-			else lenght=lenght+adc;
+			if(position+adc>200)position=200;
+			else position=position+adc;
 		}
-		if(lenght==200)direction=left;
-		if(lenght==0)direction=right;
+		if(position==200)direction=left;
+		if(position==0)direction=right;
+		if(position==0)position=1;;
 		break;
 	}
 }
@@ -75,20 +124,20 @@ ISR(TIM0_OVF_vect)
 ISR(INT0_vect)
 {
 	cli();
-	_delay_ms(200);//debouncing
+	_delay_ms(100);/*debouncing*/
 	remember=adc;
 	current_mode=neutral;
+	ticks=0;
 	while(!(PINB & button))
 	{
 		ticks++;
 		_delay_ms(10);
-		if(ticks>100)
+		if(ticks>100) /* long press >1s */
 		{
 			current_mode=oscillating;
 			ticks=0;
 		}
 	}
-	
 	sei();
 }
 
@@ -97,20 +146,26 @@ int main(void)
     DDRB |= output;
 	PORTB |=button;
 	
-	GIMSK |=(1<<INT0);//interrupt on low level
+	GIMSK |=(1<<INT0); /*interrupt on low level*/
 	
-	TCCR0B |= (1<<CS02); //up-counting prescaler 256
+	TCCR0B |= (1<<CS02); /*up-counting prescaler 256, interrupt enable*/
 	TIMSK0 |= (1<<TOIE0);
 	
-	ADCSRA |=(1<<ADEN) | (1<<ADPS2);		// prescaler-16 
-	ADMUX |=(1<<MUX1); //input- PB4
+	ADCSRA |=(1<<ADEN) | (1<<ADPS2);		 /*prescaler 16 */
+	ADMUX |=(1<<MUX1); /*input- PB4*/
 	sei();
+	
     while(1)
     {
 		ADCSRA |=(1<<ADSC);
 		while(ADCSRA & (1<<ADSC))
-		adc=ADC/5;	//result- almost 200
-		if(remember-adc>50||remember+adc<50)
-		if(current_mode==neutral)current_mode=normal;
+		adc=ADC/5;	/*result- almost 200*/
+		if(remember+30<adc || remember-30>adc)
+		{
+			if(current_mode==neutral)
+			{
+				current_mode=normal;
+			}
+		}
     }
 }
