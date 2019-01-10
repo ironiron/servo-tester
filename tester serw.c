@@ -6,13 +6,13 @@
  Servo tester. In period of 20ms sends 0,5-2,5ms impulse to servo.
  potentiometer PB4
  button PB1 INT0 long press (>1s) servo is oscillating, short press- neutrum.
- Return to normal mode by pressing button (if oscillating), or by moving potentiometer.
+ Return to normal mode by pressing button (if was oscillating), or by moving potentiometer.
  output PB0
  
  tester serw wysyła co ok. 20ms impuls o długości 0,5-2,5ms do serwa.
  Potencjometr na PB4
  Przycisk na PB1 INT0. długie (>1s) naciśnięcie serwo oscyluje, krótkie stoi w neutrum 
- powrót do pracy swobodnej potencjometrem, bądź przyciskiem jeśli był tryb oscylacji.
+ powrót do pracy swobodnej potencjometrem, bądź przyciskiem jeśli wcześniej był w tryb oscylacji.
  wyjście PB0
  */ 
 
@@ -35,7 +35,7 @@ enum direction {left, right} direction;
 
 ISR(TIM0_OVF_vect)
 {
-	TCNT0=162; /*interrupt every 20 ms (f_cpu= 1200000 Hz)*/
+	TCNT0=162; /*interrupt every 19,8 ms (f_cpu= 1200000 Hz)*/
 	
 	switch (current_mode)
 	{
@@ -74,7 +74,7 @@ ISR(TIM0_OVF_vect)
 		set_output;
 		_delay_us(500);
 		_delay_us(500);
-		_delay_us(500);/*delay =1.5ms (max delay of this func. can be only 768 us)*/
+		_delay_us(500);/*delay =1.5ms (max delay of this func. can be only 637 us at 1,2MHz)*/
 		clear_output;
 		break;
 		
@@ -106,7 +106,7 @@ ISR(TIM0_OVF_vect)
 		adc=adc/20;
 		if(direction==left)
 		{
-			if(position-adc<0)position=0;
+			if(position<adc)position=0;// if position-adc<0
 			else position=position-adc;
 		}
 		else 
@@ -159,8 +159,12 @@ int main(void)
     {
 		ADCSRA |=(1<<ADSC);
 		while(ADCSRA & (1<<ADSC))
-		adc=ADC/5;	/*result- almost 200*/
-		if(remember+30<adc || remember-30>adc)
+		adc=ADC/5;	/*result- over 200*/
+		if(adc>201)
+		{
+			adc=201;
+		}
+		if(remember+30<adc || remember>adc+30)
 		{
 			if(current_mode==neutral)
 			{
