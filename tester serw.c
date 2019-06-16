@@ -19,7 +19,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include <avr/wdt.h>
 
 #define button (1<<PB1)
 #define output (1<<PB0)
@@ -29,11 +28,11 @@
 #define TCNT0_BASE 105 // tick resolution for manipulating PWM lenght is 150, thus 255-150=105.
 
 //SPI related
-#define SET_SS PORTB|=(1<<PB5)
+#define SET_SS //PORTB|=(1<<PB5)
 #define SET_CLOCK PORTB|=(1<<PB2)
 #define SET_MOSI PORTB|=(1<<PB3)
 
-#define RESET_SS PORTB&=~(1<<PB5)
+#define RESET_SS //PORTB&=~(1<<PB5)
 #define RESET_CLOCK PORTB&=~(1<<PB2)
 #define RESET_MOSI PORTB&=~(1<<PB3)
 
@@ -57,7 +56,7 @@ void _send_SPI(uint8_t data)
 	RESET_SS;
 	for(uint8_t i=0;i<8;i++)
 	{
-		if((data<<i) & 0x0f)
+		if((data<<i) & 0x80)
 		{
 			SET_MOSI;
 		}
@@ -65,13 +64,12 @@ void _send_SPI(uint8_t data)
 		{
 			RESET_MOSI;
 		}
+		_delay_us(10);
 		SET_CLOCK;
 		_delay_us(10);
 		RESET_CLOCK;
-		_delay_us(10);
 	}
 	SET_SS;
-	
 }
 
 void calculate_ticks(void)
@@ -110,60 +108,43 @@ void calculate_ticks(void)
 			if(ticks>0xff)
 			{
 				overflows_left=ticks/0xff;
-				ticks=ticks%255;
+				ticks=ticks%0xff;
 			}
 	
 }
 	
 void set_timer_generating(void)
 {
-	TCCR0B = (1<<CS01); /*up-counting prescaler 8, interrupt enable*/
+	TCCR0B = (1<<CS01); /*up-counting prescaler 8 */
 }
 
 void set_timer_waiting(void)
 {
-	TCCR0B = (1<<CS02); /*up-counting prescaler 256, interrupt enable*/
+	TCCR0B = (1<<CS02); /*up-counting prescaler 256 */
 	TCNT0=162; /*interrupt every 19,8 ms (f_cpu= 1200000 Hz)*/
 }
 
 ISR(TIM0_OVF_vect)
 {
-	
 	switch(state)
 	{
 		case waiting:
+			state=PWM;
 			set_timer_generating();
-			if (overflows_left!=0)//check if more than 0xff ticks are required
-			{
-				state=PWM_overflows;
-				overflows_left--;
-				//TCNT0 already set to 0 by default.
-			}
-			else
-			{
-				state=PWM;
-				TCNT0=0xff-ticks;
-			}
+			TCNT0=0xff-ticks;	
 			set_output;
 		break;
 		
 		case PWM:
+			if (overflows_left!=0)
+			{
+				overflows_left--;
+				return;
+			}
 			clear_output;
 			state=waiting;
 			set_timer_waiting();
 			calculate_ticks();
-		break;
-		
-		case PWM_overflows:
-			if (overflows_left!=0)
-			{
-				overflows_left--;
-			}
-			else
-			{
-				TCNT0=0xff-ticks;
-				state=PWM;
-			}
 		break;
 	}
 }
@@ -190,8 +171,11 @@ ISR(INT0_vect)
 
 ISR(WDT_vect)
 {
-	_send_SPI(0x78);
-	_send_SPI(0x20);
+	uint16_t temp=overflows_left*0xff+ticks;
+	_send_SPI(ADCH);
+	_send_SPI(ADCL);
+	_send_SPI(temp>>8);
+	_send_SPI(temp & 0xff);
 }
 
 int main(void)
@@ -199,7 +183,7 @@ int main(void)
     	DDRB |= output;
 	PORTB |=button;
 
-	DDRB |= (1<<PB2)|(1<<PB3)|(1<<PB5);
+	DDRB |= (1<<PB2)|(1<<PB3);//MOSI SCK
 	
 	GIMSK |=(1<<INT0); /*interrupt on low level*/
 	
@@ -211,13 +195,10 @@ int main(void)
 	ADCSRA |=(1<<ADEN) | (1<<ADPS2);		 /*prescaler 16 */
 	ADMUX |=(1<<MUX1); /*input- PB4*/
 	
-	wdt_enable(WDTO_120MS);
-	WDTCR |= (1<<WDTIE);
-//WDTCR |= (0<<WDP3) | (1<<WDP2) | (0<<WDP1) | (1<<WDP0);
+	WDTCR |=  (1<<WDCE) | (1<<WDE); /*Enable watchdog in interrupt mode.
+	Setting WDCE and clearing WDE (below) is required in order to disable RESET mode. */
+	WDTCR = (1<<WDTIF) | (1<<WDTIE) | (1<<WDP2) | (1<<WDP0);//interrupt every 0,5s
 
-// Set watchdog timer in interrupt mode
-// WDTCR |= (1<<WDTIE);
-// WDTCR |= (0<<WDE);
 	sei();
 	
     while(1)
